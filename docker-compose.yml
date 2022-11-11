@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    command:
+      bash -c "while !</dev/tcp/db/5432;
+      do sleep 1;
+      done;
+      alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload;
+      export ENV_PATH=.env;"
+    volumes:
+      - .:/src
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV_PATH=.env
+    depends_on:
+      - db
+  db:
+    container_name: test_db
+    image: postgres:14-alpine
+    volumes:
+      - postgres_data:/var/lib/fast_api_postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=fastapi_backend_user
+      - POSTGRES_PASSWORD=fastapi_backend_password
+      - POSTGRES_DB=fastapi_backend
+    restart: always
+volumes:
+  postgres_data:

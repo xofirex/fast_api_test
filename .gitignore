@@ -1,0 +1,8 @@
+.pytest_cache
+*.idea
+/postgres_data/
+*__pycache__
+*postgres.conf
+*postgres_data
+*venv
+*env
